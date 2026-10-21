@@ -246,35 +246,31 @@
         </div>
     </div>
 
-    <!-- Вкладка ДРУЗІ -->
+    <!-- Вкладка ДРУЗІ (з щоденним бонусом) -->
     <div id="tab-friends" class="tab-content">
         <div class="card">
             <h3>Приглашай друзей!</h3>
-            <p style="color:#8a9ba8; font-size: 0.9em;">Получай <b style="color:#00ffcc;">+50 PR GRAM</b> за каждого приглашенного друга!</p>
+            <p style="color:#8a9ba8; font-size: 0.9em;">Делись ссылкой и получай <b style="color:#00ffcc;">+50 PR GRAM</b> раз в сутки!</p>
             
             <div class="boost-card" style="flex-direction: column; align-items: flex-start; gap: 5px;">
                 <div class="boost-title">Ваша реферальная ссылка:</div>
                 <div id="ref-link-display" style="font-size: 0.75em; color: #8a9ba8; word-break: break-all;">Загрузка...</div>
             </div>
 
-            <button class="btn-invite" onclick="shareRefLink()">👥 Пригласить друга (+50 PR GRAM)</button>
+            <button class="btn-invite" onclick="shareRefLink()">👥 Поделиться ссылкой (+50 PR GRAM)</button>
             <button class="btn-buy" style="width: 100%; margin-top: 8px; background: #22303c;" onclick="copyRefLink()">📋 Скопировать ссылку</button>
 
-            <div style="margin-top: 20px; text-align: left;">
-                <div class="profile-info-row">
-                    <span class="profile-label">Приглашено друзей:</span>
-                    <span id="friends-count" class="profile-value">0</span>
-                </div>
-                <div class="profile-info-row">
-                    <span class="profile-label">Заработано на рефералах:</span>
-                    <span id="friends-earned" class="profile-value">0 PR GRAM</span>
-                </div>
-            </div>
+            <div id="bonus-status-text" style="margin-top: 15px; font-size: 0.85em; color: #00ffcc;"></div>
         </div>
     </div>
 
     <!-- Вкладка Завдання -->
-    <div id="tab-tasks" class="tab-content"><div class="card"><h3>Задания</h3><p style="color:#8a9ba8;">Скоро появятся!</p></div></div>
+    <div id="tab-tasks" class="tab-content">
+        <div class="card">
+            <h3>Задания</h3>
+            <p style="color:#8a9ba8;">Здесь будут появляться задания для получения бонусных PR GRAM!</p>
+        </div>
+    </div>
 
     <!-- Вкладка ПРОФІЛЬ -->
     <div id="tab-profile" class="tab-content">
@@ -304,7 +300,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // ТОЧНИЙ ЮЗЕРНЕЙМ ВАШОГО БОТА
         const BOT_USERNAME = "Prgramminning_bot"; 
         const OWNER_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
@@ -326,7 +321,7 @@
         document.getElementById('profile-fullname').innerText = fullNameStr;
         if (userPhotoUrl) document.getElementById('profile-avatar').src = userPhotoUrl;
 
-        // Генерація реферального посилання
+        // Посилання
         const refLink = `https://t.me/${BOT_USERNAME}?startapp=ref_${userId}`;
         document.getElementById('ref-link-display').innerText = refLink;
 
@@ -386,23 +381,11 @@
         let claimBalance = parseFloat(localStorage.getItem('pr_claim')) || 0;
         let lastActiveTime = parseInt(localStorage.getItem('pr_last_time')) || Date.now();
         let boostMultiplier = parseInt(localStorage.getItem('pr_boost')) || 1;
-        let invitedCount = parseInt(localStorage.getItem('pr_ref_count')) || 0;
-
-        // Перевірка, чи користувач прийшов за реферальним посиланням
-        if (tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
-            const param = tg.initDataUnsafe.start_param;
-            if (param.startsWith('ref_') && !localStorage.getItem('pr_ref_claimed')) {
-                const referrerId = param.replace('ref_', '');
-                if (referrerId !== userId) {
-                    balance += 50; // Бонус новому гравцю за реєстрацію за посиланням
-                    localStorage.setItem('pr_ref_claimed', 'true');
-                    alert("🎉 Вы зарегистрировались по приглашению и получили +50 PR GRAM!");
-                }
-            }
-        }
+        let lastShareTime = parseInt(localStorage.getItem('pr_last_share')) || 0;
 
         const MAX_MS = 6 * 3600 * 1000;
         const BASE_SPEED = 0.00005;
+        const DAY_IN_MS = 24 * 3600 * 1000;
 
         let elapsed = Date.now() - lastActiveTime;
         if (elapsed > 0) {
@@ -450,14 +433,30 @@
             updateUI();
         }
 
+        // Логіка щоденного бонусу за копіювання/поширення посилання
+        function processDailyShareBonus() {
+            const now = Date.now();
+            if (now - lastShareTime >= DAY_IN_MS) {
+                balance += 50;
+                lastShareTime = now;
+                saveData();
+                updateUI();
+                playClaimSound();
+                alert("🎉 Поздравляем! Ссылка скопирована, вы получили ежедневный бонус +50 PR GRAM!");
+            } else {
+                alert("📋 Ссылка скопирована! Ежедневный бонус +50 PR GRAM уже получен. Следующий доступен через 24 часа.");
+            }
+        }
+
         function shareRefLink() {
-            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("Присоединяйся к майнингу PR GRAM и получи +50 PR GRAM бонусом! 🚀")}`;
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("Присоединяйся к майнингу PR GRAM! 🚀")}`;
             tg.openTelegramLink(shareUrl);
+            processDailyShareBonus();
         }
 
         function copyRefLink() {
             navigator.clipboard.writeText(refLink).then(() => {
-                alert("Ссылка скопирована в буфер обмена!");
+                processDailyShareBonus();
             });
         }
 
@@ -500,9 +499,6 @@
             document.getElementById('speed-multiplier').innerText = `${boostMultiplier}x`;
             document.getElementById('profile-boost').innerText = `${boostMultiplier}x`;
 
-            document.getElementById('friends-count').innerText = invitedCount;
-            document.getElementById('friends-earned').innerText = `${invitedCount * 50} PR GRAM`;
-
             let rankName = " 🌱 Новичок";
             if (boostMultiplier >= 3 && boostMultiplier < 6) rankName = " ⚡ Искатель";
             else if (boostMultiplier >= 6 && boostMultiplier < 10) rankName = " 💎 Мастер клика";
@@ -514,6 +510,20 @@
             let hours = Math.floor(timeLeft / (1000 * 3600));
             let minutes = Math.floor((timeLeft % (1000 * 3600)) / (1000 * 60));
             document.getElementById('timer-text').innerText = `До стопа: ${hours}г ${minutes}хв`;
+
+            // Статус щоденного бонусу
+            const bonusDiff = Date.now() - lastShareTime;
+            const statusElem = document.getElementById('bonus-status-text');
+            if (bonusDiff >= DAY_IN_MS) {
+                statusElem.innerText = "🎁 Ежедневный бонус +50 PR GRAM доступен!";
+                statusElem.style.color = "#00ffcc";
+            } else {
+                const waitMs = DAY_IN_MS - bonusDiff;
+                const h = Math.floor(waitMs / (1000 * 3600));
+                const m = Math.floor((waitMs % (1000 * 3600)) / (1000 * 60));
+                statusElem.innerText = `⏳ Следующий бонус через: ${h}ч ${m}мин`;
+                statusElem.style.color = "#ffaa00";
+            }
         }
 
         function saveData() {
@@ -521,7 +531,7 @@
             localStorage.setItem('pr_claim', claimBalance);
             localStorage.setItem('pr_last_time', lastActiveTime);
             localStorage.setItem('pr_boost', boostMultiplier);
-            localStorage.setItem('pr_ref_count', invitedCount);
+            localStorage.setItem('pr_last_share', lastShareTime);
         }
 
         function showFloatingText(e) {
