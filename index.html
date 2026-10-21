@@ -93,7 +93,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Стилі профілю */
+        /* Профіль */
         .profile-avatar {
             width: 90px;
             height: 90px;
@@ -123,6 +123,7 @@
             font-size: 0.9em;
         }
 
+        /* Бусти та Друзі */
         .boost-card {
             background: #111823;
             border: 1px solid #00ffcc33;
@@ -144,7 +145,18 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .btn-buy:active { transform: scale(0.95); }
+        .btn-invite {
+            background: linear-gradient(90deg, #0088cc, #00ffcc);
+            color: #000;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
 
         .nav-bar {
             position: fixed;
@@ -209,14 +221,13 @@
 
             <button class="btn-claim" onclick="claimCoins()">СУПЕР КЛАЙМ / ЗАБРАТЬ</button>
 
-            <!-- Монетка -->
             <div class="coin-container" onclick="mine(event)">
                 <svg class="coin-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="100" cy="100" r="96" fill="#000000" stroke="#00ffcc" stroke-width="6"/>
                     <circle cx="100" cy="100" r="88" fill="none" stroke="#00ffcc" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
                     <g fill="#ffffff" transform="translate(42, 42) scale(0.23)">
                         <path d="M 400 200 C 400 310.457 310.457 400 200 400 C 158.5 400 120.3 387.4 88.6 365.8 L 0 400 L 34.2 311.4 C 12.6 279.7 0 241.5 0 200 C 0 89.543 89.543 0 200 0 C 310.457 0 400 89.543 400 200 Z" fill="none" stroke="#ffffff" stroke-width="42" stroke-linejoin="round" stroke-linecap="round"/>
-                        <path d="M 120 200 L 180 260 L 310 130" fill="none" stroke="#ffffff" stroke-width="45" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M 120 200 L 180 260 L 310 130" fill="none" stroke="#ffffff" stroke-width="45" stroke-linejoin="round"/>
                     </g>
                 </svg>
             </div>
@@ -229,64 +240,55 @@
             <h3>Ускорение майнинга</h3>
             <p style="font-size:0.85em; color:#8a9ba8;">Текущая скорость: <b id="speed-multiplier" style="color:#00ffcc;">1x</b></p>
             
-            <div class="boost-card">
-                <div><div class="boost-title">Ускорение +1x</div><div class="boost-desc">Увеличивает добычу в 2 раза</div></div>
-                <button class="btn-buy" onclick="buyBoost(0.01, 1)">0.01 TON</button>
+            <div class="boost-card"><div><div class="boost-title">Ускорение +1x</div><div class="boost-desc">Увеличивает добычу в 2 раза</div></div><button class="btn-buy" onclick="buyBoost(0.01, 1)">0.01 TON</button></div>
+            <div class="boost-card"><div><div class="boost-title">Ускорение +2x</div><div class="boost-desc">Увеличивает добычу в 3 раза</div></div><button class="btn-buy" onclick="buyBoost(0.02, 2)">0.02 TON</button></div>
+            <div class="boost-card"><div><div class="boost-title">Ускорение +3x</div><div class="boost-desc">Увеличивает добычу в 4 раза</div></div><button class="btn-buy" onclick="buyBoost(0.03, 3)">0.03 TON</button></div>
+            <div class="boost-card"><div><div class="boost-title">Ускорение +4x</div><div class="boost-desc">Увеличивает добычу в 5 раз</div></div><button class="btn-buy" onclick="buyBoost(0.04, 4)">0.04 TON</button></div>
+            <div class="boost-card"><div><div class="boost-title">Ускорение +5x</div><div class="boost-desc">Увеличивает добычу в 6 раз</div></div><button class="btn-buy" onclick="buyBoost(0.05, 5)">0.05 TON</button></div>
+        </div>
+    </div>
+
+    <!-- Вкладка ДРУЗІ -->
+    <div id="tab-friends" class="tab-content">
+        <div class="card">
+            <h3>Приглашай друзей!</h3>
+            <p style="color:#8a9ba8; font-size: 0.9em;">Получай <b style="color:#00ffcc;">+50 PR GRAM</b> за каждого приглашенного друга!</p>
+            
+            <div class="boost-card" style="flex-direction: column; align-items: flex-start; gap: 5px;">
+                <div class="boost-title">Ваша реферальная ссылка:</div>
+                <div id="ref-link-display" style="font-size: 0.75em; color: #8a9ba8; word-break: break-all;">Загрузка...</div>
             </div>
-            <div class="boost-card">
-                <div><div class="boost-title">Ускорение +2x</div><div class="boost-desc">Увеличивает добычу в 3 раза</div></div>
-                <button class="btn-buy" onclick="buyBoost(0.02, 2)">0.02 TON</button>
-            </div>
-            <div class="boost-card">
-                <div><div class="boost-title">Ускорение +3x</div><div class="boost-desc">Увеличивает добычу в 4 раза</div></div>
-                <button class="btn-buy" onclick="buyBoost(0.03, 3)">0.03 TON</button>
-            </div>
-            <div class="boost-card">
-                <div><div class="boost-title">Ускорение +4x</div><div class="boost-desc">Увеличивает добычу в 5 раз</div></div>
-                <button class="btn-buy" onclick="buyBoost(0.04, 4)">0.04 TON</button>
-            </div>
-            <div class="boost-card">
-                <div><div class="boost-title">Ускорение +5x</div><div class="boost-desc">Увеличивает добычу в 6 раз</div></div>
-                <button class="btn-buy" onclick="buyBoost(0.05, 5)">0.05 TON</button>
+
+            <button class="btn-invite" onclick="shareRefLink()">👥 Пригласить друга (+50 PR GRAM)</button>
+            <button class="btn-buy" style="width: 100%; margin-top: 8px; background: #22303c;" onclick="copyRefLink()">📋 Скопировать ссылку</button>
+
+            <div style="margin-top: 20px; text-align: left;">
+                <div class="profile-info-row">
+                    <span class="profile-label">Приглашено друзей:</span>
+                    <span id="friends-count" class="profile-value">0</span>
+                </div>
+                <div class="profile-info-row">
+                    <span class="profile-label">Заработано на рефералах:</span>
+                    <span id="friends-earned" class="profile-value">0 PR GRAM</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Вкладки Завдання та Друзі -->
+    <!-- Вкладка Завдання -->
     <div id="tab-tasks" class="tab-content"><div class="card"><h3>Задания</h3><p style="color:#8a9ba8;">Скоро появятся!</p></div></div>
-    <div id="tab-friends" class="tab-content"><div class="card"><h3>Друзья</h3><p style="color:#8a9ba8;">Реферальная система в разработке.</p></div></div>
 
     <!-- Вкладка ПРОФІЛЬ -->
     <div id="tab-profile" class="tab-content">
         <div class="card">
             <h3>Профиль игрока</h3>
-            
-            <!-- Аватарка -->
             <img id="profile-avatar" src="" alt="Avatar" class="profile-avatar" onerror="this.src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f464.png'">
-            
-            <!-- Ранг / Титул -->
-            <div>
-                <span id="profile-rank" class="profile-rank">Новичок</span>
-            </div>
-
-            <!-- Деталі -->
+            <div><span id="profile-rank" class="profile-rank">Новичок</span></div>
             <div style="margin-top: 15px;">
-                <div class="profile-info-row">
-                    <span class="profile-label">Никнейм:</span>
-                    <span id="profile-username" class="profile-value">-</span>
-                </div>
-                <div class="profile-info-row">
-                    <span class="profile-label">Имя:</span>
-                    <span id="profile-fullname" class="profile-value">-</span>
-                </div>
-                <div class="profile-info-row">
-                    <span class="profile-label">В проекте с:</span>
-                    <span id="profile-date" class="profile-value">-</span>
-                </div>
-                <div class="profile-info-row">
-                    <span class="profile-label">Текущий буст:</span>
-                    <span id="profile-boost" class="profile-value">1x</span>
-                </div>
+                <div class="profile-info-row"><span class="profile-label">Никнейм:</span><span id="profile-username" class="profile-value">-</span></div>
+                <div class="profile-info-row"><span class="profile-label">Имя:</span><span id="profile-fullname" class="profile-value">-</span></div>
+                <div class="profile-info-row"><span class="profile-label">В проекте с:</span><span id="profile-date" class="profile-value">-</span></div>
+                <div class="profile-info-row"><span class="profile-label">Текущий буст:</span><span id="profile-boost" class="profile-value">1x</span></div>
             </div>
         </div>
     </div>
@@ -297,39 +299,38 @@
         <div class="nav-item" onclick="switchTab('tasks', this)"><div>📋</div><div>Задания</div></div>
         <div class="nav-item" onclick="switchTab('boosts', this)"><div>⚡</div><div>Бусты</div></div>
         <div class="nav-item" onclick="switchTab('friends', this)"><div>👥</div><div>Друзья</div></div>
-        <div class="nav-item" onclick="switchTab('profile', this)" id="nav-profile-btn"><div>👤</div><div>Профиль</div></div>
+        <div class="nav-item" onclick="switchTab('profile', this)"><div>👤</div><div>Профиль</div></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        const BOT_USERNAME = "Prgram_bot"; // Замініть на точний юзернейм вашого бота
         const OWNER_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
-        const userDisplay = document.getElementById('user-display');
+        let userId = "guest";
         let usernameStr = "Гость";
         let fullNameStr = "Гость";
         let userPhotoUrl = "";
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
+            userId = user.id.toString();
             usernameStr = user.username ? `@${user.username}` : `ID: ${user.id}`;
             fullNameStr = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-            if (user.photo_url) {
-                userPhotoUrl = user.photo_url;
-            }
+            if (user.photo_url) userPhotoUrl = user.photo_url;
         }
-        
-        userDisplay.innerText = usernameStr;
 
-        // Заповнення даних профілю
+        document.getElementById('user-display').innerText = usernameStr;
         document.getElementById('profile-username').innerText = usernameStr;
         document.getElementById('profile-fullname').innerText = fullNameStr;
-        if (userPhotoUrl) {
-            document.getElementById('profile-avatar').src = userPhotoUrl;
-        }
+        if (userPhotoUrl) document.getElementById('profile-avatar').src = userPhotoUrl;
 
-        // Дата входу в проєкт (зберігається один раз при першому запуску)
+        // Генерація реферального посилання
+        const refLink = `https://t.me/${BOT_USERNAME}?startapp=ref_${userId}`;
+        document.getElementById('ref-link-display').innerText = refLink;
+
         let joinDate = localStorage.getItem('pr_join_date');
         if (!joinDate) {
             const now = new Date();
@@ -386,6 +387,20 @@
         let claimBalance = parseFloat(localStorage.getItem('pr_claim')) || 0;
         let lastActiveTime = parseInt(localStorage.getItem('pr_last_time')) || Date.now();
         let boostMultiplier = parseInt(localStorage.getItem('pr_boost')) || 1;
+        let invitedCount = parseInt(localStorage.getItem('pr_ref_count')) || 0;
+
+        // Перевірка, чи користувач прийшов за реферальним посиланням
+        if (tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
+            const param = tg.initDataUnsafe.start_param;
+            if (param.startsWith('ref_') && !localStorage.getItem('pr_ref_claimed')) {
+                const referrerId = param.replace('ref_', '');
+                if (referrerId !== userId) {
+                    balance += 50; // Бонус новому гравцю за реєстрацію за посиланням
+                    localStorage.setItem('pr_ref_claimed', 'true');
+                    alert("🎉 Вы зарегистрировались по приглашению и получили +50 PR GRAM!");
+                }
+            }
+        }
 
         const MAX_MS = 6 * 3600 * 1000;
         const BASE_SPEED = 0.00005;
@@ -436,6 +451,17 @@
             updateUI();
         }
 
+        function shareRefLink() {
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("Присоединяйся к майнингу PR GRAM и получи +50 PR GRAM бонусом! 🚀")}`;
+            tg.openTelegramLink(shareUrl);
+        }
+
+        function copyRefLink() {
+            navigator.clipboard.writeText(refLink).then(() => {
+                alert("Ссылка скопирована в буфер обмена!");
+            });
+        }
+
         async function buyBoost(tonAmount, boostAdd) {
             if (!tonConnectUI.connected) {
                 alert("Пожалуйста, подключите ваш TON кошелек!");
@@ -475,7 +501,9 @@
             document.getElementById('speed-multiplier').innerText = `${boostMultiplier}x`;
             document.getElementById('profile-boost').innerText = `${boostMultiplier}x`;
 
-            // Визначення рангу гравця залежно від бусту або балансу
+            document.getElementById('friends-count').innerText = invitedCount;
+            document.getElementById('friends-earned').innerText = `${invitedCount * 50} PR GRAM`;
+
             let rankName = " 🌱 Новичок";
             if (boostMultiplier >= 3 && boostMultiplier < 6) rankName = " ⚡ Искатель";
             else if (boostMultiplier >= 6 && boostMultiplier < 10) rankName = " 💎 Мастер клика";
@@ -494,6 +522,7 @@
             localStorage.setItem('pr_claim', claimBalance);
             localStorage.setItem('pr_last_time', lastActiveTime);
             localStorage.setItem('pr_boost', boostMultiplier);
+            localStorage.setItem('pr_ref_count', invitedCount);
         }
 
         function showFloatingText(e) {
