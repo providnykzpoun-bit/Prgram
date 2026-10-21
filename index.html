@@ -93,6 +93,36 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+        /* Стилі профілю */
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #00ffcc;
+            object-fit: cover;
+            margin-bottom: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+        .profile-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #22303c;
+            font-size: 0.95em;
+        }
+        .profile-label { color: #8a9ba8; }
+        .profile-value { color: #00ffcc; font-weight: bold; }
+        .profile-rank {
+            background: linear-gradient(90deg, #0088cc, #00ffcc);
+            color: #000;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 15px;
+            display: inline-block;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
         .boost-card {
             background: #111823;
             border: 1px solid #00ffcc33;
@@ -200,51 +230,66 @@
             <p style="font-size:0.85em; color:#8a9ba8;">Текущая скорость: <b id="speed-multiplier" style="color:#00ffcc;">1x</b></p>
             
             <div class="boost-card">
-                <div>
-                    <div class="boost-title">Ускорение +1x</div>
-                    <div class="boost-desc">Увеличивает добычу в 2 раза</div>
-                </div>
+                <div><div class="boost-title">Ускорение +1x</div><div class="boost-desc">Увеличивает добычу в 2 раза</div></div>
                 <button class="btn-buy" onclick="buyBoost(0.01, 1)">0.01 TON</button>
             </div>
-
             <div class="boost-card">
-                <div>
-                    <div class="boost-title">Ускорение +2x</div>
-                    <div class="boost-desc">Увеличивает добычу в 3 раза</div>
-                </div>
+                <div><div class="boost-title">Ускорение +2x</div><div class="boost-desc">Увеличивает добычу в 3 раза</div></div>
                 <button class="btn-buy" onclick="buyBoost(0.02, 2)">0.02 TON</button>
             </div>
-
             <div class="boost-card">
-                <div>
-                    <div class="boost-title">Ускорение +3x</div>
-                    <div class="boost-desc">Увеличивает добычу в 4 раза</div>
-                </div>
+                <div><div class="boost-title">Ускорение +3x</div><div class="boost-desc">Увеличивает добычу в 4 раза</div></div>
                 <button class="btn-buy" onclick="buyBoost(0.03, 3)">0.03 TON</button>
             </div>
-
             <div class="boost-card">
-                <div>
-                    <div class="boost-title">Ускорение +4x</div>
-                    <div class="boost-desc">Увеличивает добычу в 5 раз</div>
-                </div>
+                <div><div class="boost-title">Ускорение +4x</div><div class="boost-desc">Увеличивает добычу в 5 раз</div></div>
                 <button class="btn-buy" onclick="buyBoost(0.04, 4)">0.04 TON</button>
             </div>
-
             <div class="boost-card">
-                <div>
-                    <div class="boost-title">Ускорение +5x</div>
-                    <div class="boost-desc">Увеличивает добычу в 6 раз</div>
-                </div>
+                <div><div class="boost-title">Ускорение +5x</div><div class="boost-desc">Увеличивает добычу в 6 раз</div></div>
                 <button class="btn-buy" onclick="buyBoost(0.05, 5)">0.05 TON</button>
             </div>
         </div>
     </div>
 
-    <!-- Вкладки Завдання, Друзі, Профіль -->
+    <!-- Вкладки Завдання та Друзі -->
     <div id="tab-tasks" class="tab-content"><div class="card"><h3>Задания</h3><p style="color:#8a9ba8;">Скоро появятся!</p></div></div>
     <div id="tab-friends" class="tab-content"><div class="card"><h3>Друзья</h3><p style="color:#8a9ba8;">Реферальная система в разработке.</p></div></div>
-    <div id="tab-profile" class="tab-content"><div class="card"><h3>Профиль</h3><div id="profile-details" style="color:#00ffcc; font-size:1.1em;"></div></div></div>
+
+    <!-- Вкладка ПРОФІЛЬ -->
+    <div id="tab-profile" class="tab-content">
+        <div class="card">
+            <h3>Профиль игрока</h3>
+            
+            <!-- Аватарка -->
+            <img id="profile-avatar" src="" alt="Avatar" class="profile-avatar" onerror="this.src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f464.png'">
+            
+            <!-- Ранг / Титул -->
+            <div>
+                <span id="profile-rank" class="profile-rank">Новичок</span>
+            </div>
+
+            <!-- Деталі -->
+            <div style="margin-top: 15px;">
+                <div class="profile-info-row">
+                    <span class="profile-label">Никнейм:</span>
+                    <span id="profile-username" class="profile-value">-</span>
+                </div>
+                <div class="profile-info-row">
+                    <span class="profile-label">Имя:</span>
+                    <span id="profile-fullname" class="profile-value">-</span>
+                </div>
+                <div class="profile-info-row">
+                    <span class="profile-label">В проекте с:</span>
+                    <span id="profile-date" class="profile-value">-</span>
+                </div>
+                <div class="profile-info-row">
+                    <span class="profile-label">Текущий буст:</span>
+                    <span id="profile-boost" class="profile-value">1x</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Нижнє меню -->
     <div class="nav-bar">
@@ -252,7 +297,7 @@
         <div class="nav-item" onclick="switchTab('tasks', this)"><div>📋</div><div>Задания</div></div>
         <div class="nav-item" onclick="switchTab('boosts', this)"><div>⚡</div><div>Бусты</div></div>
         <div class="nav-item" onclick="switchTab('friends', this)"><div>👥</div><div>Друзья</div></div>
-        <div class="nav-item" onclick="switchTab('profile', this)"><div>👤</div><div>Профиль</div></div>
+        <div class="nav-item" onclick="switchTab('profile', this)" id="nav-profile-btn"><div>👤</div><div>Профиль</div></div>
     </div>
 
     <script>
@@ -263,12 +308,35 @@
 
         const userDisplay = document.getElementById('user-display');
         let usernameStr = "Гость";
+        let fullNameStr = "Гость";
+        let userPhotoUrl = "";
+
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
-            usernameStr = user.username ? `@${user.username}` : `${user.first_name}`;
+            usernameStr = user.username ? `@${user.username}` : `ID: ${user.id}`;
+            fullNameStr = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+            if (user.photo_url) {
+                userPhotoUrl = user.photo_url;
+            }
         }
+        
         userDisplay.innerText = usernameStr;
-        document.getElementById('profile-details').innerText = usernameStr;
+
+        // Заповнення даних профілю
+        document.getElementById('profile-username').innerText = usernameStr;
+        document.getElementById('profile-fullname').innerText = fullNameStr;
+        if (userPhotoUrl) {
+            document.getElementById('profile-avatar').src = userPhotoUrl;
+        }
+
+        // Дата входу в проєкт (зберігається один раз при першому запуску)
+        let joinDate = localStorage.getItem('pr_join_date');
+        if (!joinDate) {
+            const now = new Date();
+            joinDate = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute:'2-digit'});
+            localStorage.setItem('pr_join_date', joinDate);
+        }
+        document.getElementById('profile-date').innerText = joinDate;
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/Prgram/tonconnect-manifest.json',
@@ -276,18 +344,12 @@
             uiPreferences: { lang: 'ru' }
         });
 
-        // Ініціалізація звукового контексту
         let audioCtx;
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        // Звук кліку
         function playClickSound() {
             initAudio();
             const osc = audioCtx.createOscillator();
@@ -303,7 +365,6 @@
             osc.stop(audioCtx.currentTime + 0.15);
         }
 
-        // Звук переключення / збору (переможний акордовий передзвін)
         function playClaimSound() {
             initAudio();
             const notes = [523.25, 659.25, 783.99, 1046.50];
@@ -321,7 +382,6 @@
             });
         }
 
-        // Логіка гри
         let balance = parseFloat(localStorage.getItem('pr_balance')) || 0;
         let claimBalance = parseFloat(localStorage.getItem('pr_claim')) || 0;
         let lastActiveTime = parseInt(localStorage.getItem('pr_last_time')) || Date.now();
@@ -413,6 +473,14 @@
             document.getElementById('balance').innerText = balance.toFixed(4) + " PR GRAM";
             document.getElementById('claim-balance').innerText = "+" + claimBalance.toFixed(4) + " PR GRAM";
             document.getElementById('speed-multiplier').innerText = `${boostMultiplier}x`;
+            document.getElementById('profile-boost').innerText = `${boostMultiplier}x`;
+
+            // Визначення рангу гравця залежно від бусту або балансу
+            let rankName = " 🌱 Новичок";
+            if (boostMultiplier >= 3 && boostMultiplier < 6) rankName = " ⚡ Искатель";
+            else if (boostMultiplier >= 6 && boostMultiplier < 10) rankName = " 💎 Мастер клика";
+            else if (boostMultiplier >= 10) rankName = " 👑 Элитный шахтер";
+            document.getElementById('profile-rank').innerText = rankName;
             
             let timeLeft = MAX_MS - (Date.now() - lastActiveTime);
             if (timeLeft < 0) timeLeft = 0;
