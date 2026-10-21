@@ -28,17 +28,11 @@
             margin-bottom: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-        .user-box {
-            text-align: left;
-        }
-        .user-name {
-            font-size: 1em;
-            color: #00ffcc;
-            font-weight: bold;
-        }
+        .user-box { text-align: left; }
+        .user-name { font-size: 1em; color: #00ffcc; font-weight: bold; }
         .status-offline {
             font-size: 0.75em;
-            background: #ff4d4d;
+            background: #00aa55;
             color: white;
             padding: 2px 6px;
             border-radius: 4px;
@@ -52,17 +46,8 @@
             margin-bottom: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-        .assets-title {
-            font-size: 0.85em;
-            color: #8a9ba8;
-            letter-spacing: 1px;
-        }
-        .balance {
-            font-size: 2em;
-            color: #00ffcc;
-            margin: 5px 0;
-            font-weight: bold;
-        }
+        .assets-title { font-size: 0.85em; color: #8a9ba8; letter-spacing: 1px; }
+        .balance { font-size: 2em; color: #00ffcc; margin: 5px 0; font-weight: bold; }
         .claim-box {
             background: linear-gradient(135deg, #0f2824, #153e36);
             border: 1px solid #00ffcc;
@@ -73,11 +58,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .claim-amount {
-            color: #00ffcc;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
+        .claim-amount { color: #00ffcc; font-size: 1.2em; font-weight: bold; }
         .btn-claim {
             background: linear-gradient(to bottom, #ffd700, #ffaa00);
             color: #000;
@@ -91,10 +72,7 @@
             box-shadow: 0 4px 15px rgba(255, 170, 0, 0.4);
             transition: 0.1s;
         }
-        .btn-claim:active {
-            transform: scale(0.97);
-        }
-        /* Монетка */
+        .btn-claim:active { transform: scale(0.97); }
         .coin-container {
             position: relative;
             display: inline-block;
@@ -109,9 +87,36 @@
             box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
             transition: transform 0.08s ease;
         }
-        .coin-container:active .coin-svg {
-            transform: scale(0.92);
+        .coin-container:active .coin-svg { transform: scale(0.92); }
+        
+        /* Секції меню */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Стилі бустів */
+        .boost-card {
+            background: #111823;
+            border: 1px solid #00ffcc33;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        .boost-title { font-weight: bold; color: #00ffcc; text-align: left; }
+        .boost-desc { font-size: 0.8em; color: #8a9ba8; text-align: left; }
+        .btn-buy {
+            background: #0088cc;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-buy:active { transform: scale(0.95); }
+
         /* Нижнє меню */
         .nav-bar {
             position: fixed;
@@ -132,14 +137,9 @@
             font-size: 0.75em;
             cursor: pointer;
         }
-        .nav-item.active {
-            color: #00ffcc;
-        }
-        .nav-item div:first-child {
-            font-size: 1.3em;
-            margin-bottom: 2px;
-        }
-        /* Анімація кліку */
+        .nav-item.active { color: #00ffcc; }
+        .nav-item div:first-child { font-size: 1.3em; margin-bottom: 2px; }
+
         .click-text {
             position: absolute;
             color: #00ffcc;
@@ -156,64 +156,135 @@
 </head>
 <body>
 
-    <!-- Верхня панель (Профіль + Гаманець) -->
+    <!-- Верхня панель -->
     <div class="top-panel">
         <div class="user-box">
             <div id="user-display" class="user-name">Загрузка...</div>
-            <div class="status-offline" id="mining-status">⏳ МАЙНИТГУЮ</div>
+            <div class="status-offline" id="mining-status">🟢 АКТИВЕН</div>
         </div>
         <div id="ton-connect-btn"></div>
     </div>
 
-    <!-- Основний блок активів -->
-    <div class="card">
-        <div class="assets-title">БАЛАНС АКТИВОВ</div>
-        <div id="balance" class="balance">0.0000 PR GRAM</div>
+    <!-- Вкладка Майнінг -->
+    <div id="tab-mining" class="tab-content active">
+        <div class="card">
+            <div class="assets-title">БАЛАНС АКТИВОВ</div>
+            <div id="balance" class="balance">0.0000 PR GRAM</div>
 
-        <!-- Накопичено для збору -->
-        <div class="claim-box">
-            <div style="text-align: left;">
-                <div style="font-size: 0.8em; color: #8a9ba8;">Накопичено:</div>
-                <div id="claim-balance" class="claim-amount">+0.0000 PR GRAM</div>
+            <div class="claim-box">
+                <div style="text-align: left;">
+                    <div style="font-size: 0.8em; color: #8a9ba8;">Накопичено:</div>
+                    <div id="claim-balance" class="claim-amount">+0.0000 PR GRAM</div>
+                </div>
+                <div style="font-size: 0.75em; color: #ffaa00;" id="timer-text">Лимит: 6ч</div>
             </div>
-            <div style="font-size: 0.75em; color: #ffaa00;" id="timer-text">Лимит: 6ч</div>
-        </div>
 
-        <!-- Кнопка CLAIM -->
-        <button class="btn-claim" onclick="claimCoins()">СУПЕР КЛАЙМ / ЗАБРАТЬ</button>
+            <button class="btn-claim" onclick="claimCoins()">СУПЕР КЛАЙМ / ЗАБРАТЬ</button>
 
-        <!-- Монетка для тапання -->
-        <div class="coin-container" onclick="mine(event)">
-            <svg class="coin-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="100" cy="100" r="96" fill="#000000" stroke="#00ffcc" stroke-width="6"/>
-                <circle cx="100" cy="100" r="88" fill="none" stroke="#00ffcc" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
-                <g fill="#ffffff" transform="translate(42, 42) scale(0.23)">
-                    <path d="M 400 200 C 400 310.457 310.457 400 200 400 C 158.5 400 120.3 387.4 88.6 365.8 L 0 400 L 34.2 311.4 C 12.6 279.7 0 241.5 0 200 C 0 89.543 89.543 0 200 0 C 310.457 0 400 89.543 400 200 Z" fill="none" stroke="#ffffff" stroke-width="42" stroke-linejoin="round" stroke-linecap="round"/>
-                    <path d="M 120 200 L 180 260 L 310 130" fill="none" stroke="#ffffff" stroke-width="45" stroke-linecap="round" stroke-linejoin="round"/>
-                </g>
-            </svg>
+            <div class="coin-container" onclick="mine(event)">
+                <svg class="coin-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="100" r="96" fill="#000000" stroke="#00ffcc" stroke-width="6"/>
+                    <circle cx="100" cy="100" r="88" fill="none" stroke="#00ffcc" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
+                    <g fill="#ffffff" transform="translate(42, 42) scale(0.23)">
+                        <path d="M 400 200 C 400 310.457 310.457 400 200 400 C 158.5 400 120.3 387.4 88.6 365.8 L 0 400 L 34.2 311.4 C 12.6 279.7 0 241.5 0 200 C 0 89.543 89.543 0 200 0 C 310.457 0 400 89.543 400 200 Z" fill="none" stroke="#ffffff" stroke-width="42" stroke-linejoin="round" stroke-linecap="round"/>
+                        <path d="M 120 200 L 180 260 L 310 130" fill="none" stroke="#ffffff" stroke-width="45" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                </svg>
+            </div>
         </div>
     </div>
 
-    <!-- Нижнє меню навігації -->
+    <!-- Вкладка Бусти -->
+    <div id="tab-boosts" class="tab-content">
+        <div class="card">
+            <h3>Ускорение майнинга</h3>
+            <p style="font-size:0.85em; color:#8a9ba8;">Текущая скорость: <b id="speed-multiplier" style="color:#00ffcc;">1x</b></p>
+            
+            <div class="boost-card">
+                <div>
+                    <div class="boost-title">Ускорение +1x</div>
+                    <div class="boost-desc">Увеличивает добычу в 2 раза</div>
+                </div>
+                <button class="btn-buy" onclick="buyBoost(0.01, 1)">0.01 TON</button>
+            </div>
+
+            <div class="boost-card">
+                <div>
+                    <div class="boost-title">Ускорение +2x</div>
+                    <div class="boost-desc">Увеличивает добычу в 3 раза</div>
+                </div>
+                <button class="btn-buy" onclick="buyBoost(0.02, 2)">0.02 TON</button>
+            </div>
+
+            <div class="boost-card">
+                <div>
+                    <div class="boost-title">Ускорение +3x</div>
+                    <div class="boost-desc">Увеличивает добычу в 4 раза</div>
+                </div>
+                <button class="btn-buy" onclick="buyBoost(0.03, 3)">0.03 TON</button>
+            </div>
+
+            <div class="boost-card">
+                <div>
+                    <div class="boost-title">Ускорение +4x</div>
+                    <div class="boost-desc">Увеличивает добычу в 5 раз</div>
+                </div>
+                <button class="btn-buy" onclick="buyBoost(0.04, 4)">0.04 TON</button>
+            </div>
+
+            <div class="boost-card">
+                <div>
+                    <div class="boost-title">Ускорение +5x</div>
+                    <div class="boost-desc">Увеличивает добычу в 6 раз</div>
+                </div>
+                <button class="btn-buy" onclick="buyBoost(0.05, 5)">0.05 TON</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Вкладка Завдання -->
+    <div id="tab-tasks" class="tab-content">
+        <div class="card">
+            <h3>Задания</h3>
+            <p style="color:#8a9ba8;">Скоро появятся новые задания!</p>
+        </div>
+    </div>
+
+    <!-- Вкладка Друзі -->
+    <div id="tab-friends" class="tab-content">
+        <div class="card">
+            <h3>Друзья</h3>
+            <p style="color:#8a9ba8;">Реферальная система в разработке.</p>
+        </div>
+    </div>
+
+    <!-- Вкладка Профіль -->
+    <div id="tab-profile" class="tab-content">
+        <div class="card">
+            <h3>Профиль</h3>
+            <div id="profile-details" style="color:#00ffcc; font-size:1.1em;"></div>
+        </div>
+    </div>
+
+    <!-- Нижнє меню -->
     <div class="nav-bar">
-        <div class="nav-item active">
+        <div class="nav-item active" onclick="switchTab('mining', this)">
             <div>⛏️</div>
             <div>Майнинг</div>
         </div>
-        <div class="nav-item" onclick="alert('Задания скоро появятся!')">
+        <div class="nav-item" onclick="switchTab('tasks', this)">
             <div>📋</div>
             <div>Задания</div>
         </div>
-        <div class="nav-item" onclick="alert('Бусты в разработке!')">
+        <div class="nav-item" onclick="switchTab('boosts', this)">
             <div>⚡</div>
             <div>Бусты</div>
         </div>
-        <div class="nav-item" onclick="alert('Рефералы скоро!')">
+        <div class="nav-item" onclick="switchTab('friends', this)">
             <div>👥</div>
             <div>Друзья</div>
         </div>
-        <div class="nav-item" onclick="alert('Профиль пользователя')">
+        <div class="nav-item" onclick="switchTab('profile', this)">
             <div>👤</div>
             <div>Профиль</div>
         </div>
@@ -223,23 +294,24 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Дані користувача
+        const OWNER_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
+
         const userDisplay = document.getElementById('user-display');
+        let usernameStr = "Гость";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
-            userDisplay.innerText = user.username ? `@${user.username}` : `${user.first_name}`;
-        } else {
-            userDisplay.innerText = "Гость";
+            usernameStr = user.username ? `@${user.username}` : `${user.first_name}`;
         }
+        userDisplay.innerText = usernameStr;
+        document.getElementById('profile-details').innerText = usernameStr;
 
-        // TON Connect
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/Prgram/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-btn',
             uiPreferences: { lang: 'ru' }
         });
 
-        // Звук кліку
+        // Звуковий ефект
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -256,32 +328,32 @@
             osc.stop(audioCtx.currentTime + 0.15);
         }
 
-        // Змінні гри (зберігаються в пам'яті браузера localStorage)
+        // Збережені дані
         let balance = parseFloat(localStorage.getItem('pr_balance')) || 0;
         let claimBalance = parseFloat(localStorage.getItem('pr_claim')) || 0;
         let lastActiveTime = parseInt(localStorage.getItem('pr_last_time')) || Date.now();
-        
-        const MAX_HOURS = 6;
-        const MAX_MS = MAX_HOURS * 3600 * 1000;
-        const AUTO_SPEED_PER_SEC = 0.00005; // Швидкість автомайнінгу
+        let boostMultiplier = parseInt(localStorage.getItem('pr_boost')) || 1;
 
-        // Перевірка часу при заході (якщо минуло більше 6 годин — зупиняємо)
+        const MAX_MS = 6 * 3600 * 1000;
+        const BASE_SPEED = 0.00005;
+
+        // Перевірка офлайн-майнінгу при вході
         let elapsed = Date.now() - lastActiveTime;
         if (elapsed > 0) {
             let activeMs = Math.min(elapsed, MAX_MS);
-            let earned = (activeMs / 1000) * AUTO_SPEED_PER_SEC;
+            let earned = (activeMs / 1000) * (BASE_SPEED * boostMultiplier);
             claimBalance += earned;
         }
 
         updateUI();
 
-        // Головний цикл (автомайнінг кожну секунду)
+        // Цикл автомайнінгу
         setInterval(() => {
             let now = Date.now();
             let diff = now - lastActiveTime;
 
             if (diff < MAX_MS) {
-                claimBalance += AUTO_SPEED_PER_SEC;
+                claimBalance += (BASE_SPEED * boostMultiplier);
                 lastActiveTime = now;
                 document.getElementById('mining-status').innerText = "🟢 АКТИВЕН";
                 document.getElementById('mining-status').style.background = "#00aa55";
@@ -294,17 +366,15 @@
             updateUI();
         }, 1000);
 
-        // Клік по монетці (ручний майнінг)
         function mine(event) {
-            claimBalance += 0.0001;
-            lastActiveTime = Date.now(); // Оновлюємо час останньої активності при кліку
+            claimBalance += (0.0001 * boostMultiplier);
+            lastActiveTime = Date.now();
             playSound();
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             showFloatingText(event);
             updateUI();
         }
 
-        // Кнопка Claim (зібрати на баланс)
         function claimCoins() {
             if (claimBalance <= 0) return;
             balance += claimBalance;
@@ -314,11 +384,50 @@
             updateUI();
         }
 
+        // Покупка бусту через TON Connect
+        async function buyBoost(tonAmount, boostAdd) {
+            if (!tonConnectUI.connected) {
+                alert("Пожалуйста, подключите ваш TON кошелек!");
+                return;
+            }
+
+            const amountInNanoTon = (tonAmount * 1000000000).toString();
+            const transaction = {
+                validUntil: Math.floor(Date.now() / 1000) + 300,
+                messages: [
+                    {
+                        address: OWNER_WALLET,
+                        amount: amountInNanoTon
+                    }
+                ]
+            };
+
+            try {
+                const result = await tonConnectUI.sendTransaction(transaction);
+                if (result) {
+                    boostMultiplier += boostAdd;
+                    saveData();
+                    updateUI();
+                    alert(`Успешно! Ваш буст увеличен на +${boostAdd}x!`);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Ошибка оплаты или транзакция отменена.");
+            }
+        }
+
+        function switchTab(tabName, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            el.classList.add('active');
+        }
+
         function updateUI() {
             document.getElementById('balance').innerText = balance.toFixed(4) + " PR GRAM";
             document.getElementById('claim-balance').innerText = "+" + claimBalance.toFixed(4) + " PR GRAM";
+            document.getElementById('speed-multiplier').innerText = `${boostMultiplier}x`;
             
-            // Розрахунок часу до зупинки (6 годин)
             let timeLeft = MAX_MS - (Date.now() - lastActiveTime);
             if (timeLeft < 0) timeLeft = 0;
             let hours = Math.floor(timeLeft / (1000 * 3600));
@@ -330,6 +439,7 @@
             localStorage.setItem('pr_balance', balance);
             localStorage.setItem('pr_claim', claimBalance);
             localStorage.setItem('pr_last_time', lastActiveTime);
+            localStorage.setItem('pr_boost', boostMultiplier);
         }
 
         function showFloatingText(e) {
@@ -337,7 +447,7 @@
             const rect = container.getBoundingClientRect();
             const text = document.createElement('div');
             text.className = 'click-text';
-            text.innerText = '+0.0001';
+            text.innerText = `+${(0.0001 * boostMultiplier).toFixed(4)}`;
             
             const x = (e.clientX || rect.left + rect.width / 2) - rect.left;
             const y = (e.clientY || rect.top + rect.height / 2) - rect.top;
