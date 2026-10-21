@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prgram Mining & TON Wallet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>PR GRAM Mining</title>
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- TON Connect UI SDK -->
@@ -16,61 +16,75 @@
             text-align: center;
             padding: 20px;
             margin: 0;
+            user-select: none;
         }
         .card {
             background: #1c2536;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             margin-bottom: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
         .user-info {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #0088cc;
             font-weight: bold;
-        }
-        .btn-mine {
-            background-color: #0088cc;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            width: 100%;
-            max-width: 300px;
-        }
-        .btn-mine:active {
-            transform: scale(0.95);
-            background-color: #006699;
+            margin-top: 5px;
         }
         .balance {
-            font-size: 2em;
+            font-size: 2.2em;
             color: #00ffcc;
-            margin: 15px 0;
-        }
-        .wallet-address {
-            font-size: 0.8em;
-            word-break: break-all;
-            color: #aaaaaa;
-            margin-top: 10px;
+            margin: 10px 0;
+            font-weight: bold;
         }
         #ton-connect-btn {
             display: flex;
             justify-content: center;
             margin-bottom: 20px;
         }
+        /* Стилі монети */
+        .coin-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        .coin {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 4px solid #00ffcc;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+            cursor: pointer;
+            transition: transform 0.08s ease;
+            object-fit: cover;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .coin:active {
+            transform: scale(0.92);
+        }
+        /* Анімація вильоту числа */
+        .click-text {
+            position: absolute;
+            color: #00ffcc;
+            font-size: 20px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-60px); }
+        }
     </style>
 </head>
 <body>
 
-    <h2>Prgram Mini App</h2>
+    <h2>PR GRAM Mining</h2>
 
-    <!-- Відображення профілю Telegram -->
+    <!-- Профіль користувача -->
     <div class="card">
-        <div>Користувач:</div>
-        <div id="user-display" class="user-info">Завантаження...</div>
+        <div>Пользователь:</div>
+        <div id="user-display" class="user-info">Загрузка...</div>
     </div>
 
     <!-- Кнопка підключення TON Гаманця -->
@@ -78,15 +92,13 @@
 
     <!-- Блок Майнінгу -->
     <div class="card">
-        <h3>Майнінг баланс</h3>
-        <div id="balance" class="balance">0.0000 UA</div>
-        <button class="btn-mine" onclick="mine()">Майнити</button>
-    </div>
-
-    <!-- Інформація про гаманець призначення -->
-    <div class="card">
-        <div>Гаманець для виплат:</div>
-        <div class="wallet-address">UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw</div>
+        <h3>Баланс майнинга</h3>
+        <div id="balance" class="balance">0.0000 PR GRAM</div>
+        
+        <!-- Монетка для кліку -->
+        <div class="coin-container" onclick="mine(event)">
+            <img src="logo.jpg" alt="PR GRAM Coin" class="coin" id="coin-img" onerror="this.src='https://ton.org/download/ton_symbol.png'">
+        </div>
     </div>
 
     <script>
@@ -100,23 +112,74 @@
             const username = user.username ? `@${user.username}` : `${user.first_name} ${user.last_name || ''}`;
             userDisplay.innerText = username;
         } else {
-            userDisplay.innerText = "Гість (поза Telegram)";
+            userDisplay.innerText = "Гость (вне Telegram)";
         }
 
-        // Ініціалізація TON Connect UI
+        // Ініціалізація TON Connect з російською мовою
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/Prgram/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-btn'
+            buttonRootId: 'ton-connect-btn',
+            uiPreferences: {
+                lang: 'ru'
+            }
         });
 
-        // Простий майнінг (клікер)
+        // Генерування звуку "дзень" через Web Audio API
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playCoinSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(2400, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        // Логіка майнінгу
         let count = 0;
-        function mine() {
+        function mine(event) {
             count += 0.0001;
-            document.getElementById('balance').innerText = count.toFixed(4) + " UA";
+            document.getElementById('balance').innerText = count.toFixed(4) + " PR GRAM";
+
+            // Звук
+            playCoinSound();
+
+            // Вібрація в Telegram
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('medium');
             }
+
+            // Анімація вильоту +0.0001
+            showFloatingText(event);
+        }
+
+        function showFloatingText(e) {
+            const container = document.querySelector('.coin-container');
+            const rect = container.getBoundingClientRect();
+            const text = document.createElement('div');
+            text.className = 'click-text';
+            text.innerText = '+0.0001';
+            
+            // Позиціонування відносно кліку
+            const x = (e.clientX || rect.left + rect.width / 2) - rect.left;
+            const y = (e.clientY || rect.top + rect.height / 2) - rect.top;
+            
+            text.style.left = `${x}px`;
+            text.style.top = `${y}px`;
+
+            container.appendChild(text);
+
+            setTimeout(() => {
+                text.remove();
+            }, 800);
         }
     </script>
 </body>
