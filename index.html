@@ -73,10 +73,11 @@
             transition: 0.1s;
         }
         .btn-claim:active { transform: scale(0.97); }
+        
         .coin-container {
             position: relative;
             display: inline-block;
-            margin: 10px 0;
+            margin: 15px 0;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
@@ -88,8 +89,7 @@
             transition: transform 0.08s ease;
         }
         .coin-container:active .coin-svg { transform: scale(0.92); }
-        
-        /* Таби */
+
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
@@ -276,12 +276,20 @@
             uiPreferences: { lang: 'ru' }
         });
 
-        // Ініціалізація аудіоконтексту
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Ініціалізація звукового контексту
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
 
-        // 1. Звук кліку по монетці
+        // Звук кліку
         function playClickSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            initAudio();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
@@ -295,30 +303,25 @@
             osc.stop(audioCtx.currentTime + 0.15);
         }
 
-        // 2. Красивий переможний звук при зборі монет (Клайм)
+        // Звук переключення / збору (переможний акордовий передзвін)
         function playClaimSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            const notes = [523.25, 659.25, 783.99, 1046.50]; // Ноти До, Мі, Соль, До (C5, E5, G5, C6)
+            initAudio();
+            const notes = [523.25, 659.25, 783.99, 1046.50];
             notes.forEach((freq, index) => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.08);
-                
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime + index * 0.08);
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime + index * 0.08);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + index * 0.08 + 0.3);
-                
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                
                 osc.start(audioCtx.currentTime + index * 0.08);
                 osc.stop(audioCtx.currentTime + index * 0.08 + 0.3);
             });
         }
 
-        // Збережені дані
+        // Логіка гри
         let balance = parseFloat(localStorage.getItem('pr_balance')) || 0;
         let claimBalance = parseFloat(localStorage.getItem('pr_claim')) || 0;
         let lastActiveTime = parseInt(localStorage.getItem('pr_last_time')) || Date.now();
@@ -327,7 +330,6 @@
         const MAX_MS = 6 * 3600 * 1000;
         const BASE_SPEED = 0.00005;
 
-        // Перевірка офлайн-майнінгу при вході
         let elapsed = Date.now() - lastActiveTime;
         if (elapsed > 0) {
             let activeMs = Math.min(elapsed, MAX_MS);
@@ -337,7 +339,6 @@
 
         updateUI();
 
-        // Цикл автомайнінгу
         setInterval(() => {
             let now = Date.now();
             let diff = now - lastActiveTime;
@@ -365,16 +366,12 @@
             updateUI();
         }
 
-        // Кнопка Claim з гарним звуком перемоги
         function claimCoins() {
             if (claimBalance <= 0) return;
             balance += claimBalance;
             claimBalance = 0;
             lastActiveTime = Date.now();
-            
-            // Відтворюємо красивий тризвук при успішному зборі
             playClaimSound();
-            
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             updateUI();
         }
@@ -396,4 +393,57 @@
                 if (result) {
                     boostMultiplier += boostAdd;
                     saveData();
-                    
+                    updateUI();
+                    alert(`Успешно! Ваш буст увеличен на +${boostAdd}x!`);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Ошибка оплаты или транзакция отменена.");
+            }
+        }
+
+        function switchTab(tabName, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            el.classList.add('active');
+        }
+
+        function updateUI() {
+            document.getElementById('balance').innerText = balance.toFixed(4) + " PR GRAM";
+            document.getElementById('claim-balance').innerText = "+" + claimBalance.toFixed(4) + " PR GRAM";
+            document.getElementById('speed-multiplier').innerText = `${boostMultiplier}x`;
+            
+            let timeLeft = MAX_MS - (Date.now() - lastActiveTime);
+            if (timeLeft < 0) timeLeft = 0;
+            let hours = Math.floor(timeLeft / (1000 * 3600));
+            let minutes = Math.floor((timeLeft % (1000 * 3600)) / (1000 * 60));
+            document.getElementById('timer-text').innerText = `До стопа: ${hours}г ${minutes}хв`;
+        }
+
+        function saveData() {
+            localStorage.setItem('pr_balance', balance);
+            localStorage.setItem('pr_claim', claimBalance);
+            localStorage.setItem('pr_last_time', lastActiveTime);
+            localStorage.setItem('pr_boost', boostMultiplier);
+        }
+
+        function showFloatingText(e) {
+            const container = document.querySelector('.coin-container');
+            const rect = container.getBoundingClientRect();
+            const text = document.createElement('div');
+            text.className = 'click-text';
+            text.innerText = `+${(0.0001 * boostMultiplier).toFixed(4)}`;
+            
+            const x = (e.clientX || rect.left + rect.width / 2) - rect.left;
+            const y = (e.clientY || rect.top + rect.height / 2) - rect.top;
+            
+            text.style.left = `${x}px`;
+            text.style.top = `${y}px`;
+            container.appendChild(text);
+
+            setTimeout(() => text.remove(), 800);
+        }
+    </script>
+</body>
+</html>
