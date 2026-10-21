@@ -14,9 +14,36 @@
             background-color: #121824;
             color: #ffffff;
             text-align: center;
-            padding: 20px;
+            padding: 10px 10px 80px 10px;
             margin: 0;
             user-select: none;
+        }
+        .top-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1c2536;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .user-box {
+            text-align: left;
+        }
+        .user-name {
+            font-size: 1em;
+            color: #00ffcc;
+            font-weight: bold;
+        }
+        .status-offline {
+            font-size: 0.75em;
+            background: #ff4d4d;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 3px;
         }
         .card {
             background: #1c2536;
@@ -25,84 +52,141 @@
             margin-bottom: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-        .user-info {
-            font-size: 1.1em;
-            color: #0088cc;
-            font-weight: bold;
-            margin-top: 5px;
+        .assets-title {
+            font-size: 0.85em;
+            color: #8a9ba8;
+            letter-spacing: 1px;
         }
         .balance {
-            font-size: 2.2em;
+            font-size: 2em;
             color: #00ffcc;
-            margin: 10px 0;
+            margin: 5px 0;
             font-weight: bold;
         }
-        #ton-connect-btn {
+        .claim-box {
+            background: linear-gradient(135deg, #0f2824, #153e36);
+            border: 1px solid #00ffcc;
+            padding: 12px;
+            border-radius: 10px;
+            margin: 10px 0;
             display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            align-items: center;
         }
-        /* Стилі монети */
+        .claim-amount {
+            color: #00ffcc;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .btn-claim {
+            background: linear-gradient(to bottom, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(255, 170, 0, 0.4);
+            transition: 0.1s;
+        }
+        .btn-claim:active {
+            transform: scale(0.97);
+        }
+        /* Монетка */
         .coin-container {
             position: relative;
             display: inline-block;
-            margin: 20px 0;
+            margin: 10px 0;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
         .coin-svg {
-            width: 180px;
-            height: 180px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
-            box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
             transition: transform 0.08s ease;
         }
         .coin-container:active .coin-svg {
             transform: scale(0.92);
         }
-        /* Анімація вильоту числа */
+        /* Нижнє меню */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #0f141d;
+            border-top: 1px solid #22303c;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+        .nav-item {
+            text-align: center;
+            color: #8a9ba8;
+            font-size: 0.75em;
+            cursor: pointer;
+        }
+        .nav-item.active {
+            color: #00ffcc;
+        }
+        .nav-item div:first-child {
+            font-size: 1.3em;
+            margin-bottom: 2px;
+        }
+        /* Анімація кліку */
         .click-text {
             position: absolute;
             color: #00ffcc;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             pointer-events: none;
             animation: floatUp 0.8s ease-out forwards;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
         }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-70px); }
+            100% { opacity: 0; transform: translateY(-60px); }
         }
     </style>
 </head>
 <body>
 
-    <h2>PR GRAM Mining</h2>
-
-    <!-- Профіль користувача -->
-    <div class="card">
-        <div>Пользователь:</div>
-        <div id="user-display" class="user-info">Загрузка...</div>
+    <!-- Верхня панель (Профіль + Гаманець) -->
+    <div class="top-panel">
+        <div class="user-box">
+            <div id="user-display" class="user-name">Загрузка...</div>
+            <div class="status-offline" id="mining-status">⏳ МАЙНИТГУЮ</div>
+        </div>
+        <div id="ton-connect-btn"></div>
     </div>
 
-    <!-- Кнопка підключення TON Гаманця -->
-    <div id="ton-connect-btn"></div>
-
-    <!-- Блок Майнінгу -->
+    <!-- Основний блок активів -->
     <div class="card">
-        <h3>Баланс майнинга</h3>
+        <div class="assets-title">БАЛАНС АКТИВОВ</div>
         <div id="balance" class="balance">0.0000 PR GRAM</div>
-        
-        <!-- Монетка з намальованим логотипом -->
+
+        <!-- Накопичено для збору -->
+        <div class="claim-box">
+            <div style="text-align: left;">
+                <div style="font-size: 0.8em; color: #8a9ba8;">Накопичено:</div>
+                <div id="claim-balance" class="claim-amount">+0.0000 PR GRAM</div>
+            </div>
+            <div style="font-size: 0.75em; color: #ffaa00;" id="timer-text">Лимит: 6ч</div>
+        </div>
+
+        <!-- Кнопка CLAIM -->
+        <button class="btn-claim" onclick="claimCoins()">СУПЕР КЛАЙМ / ЗАБРАТЬ</button>
+
+        <!-- Монетка для тапання -->
         <div class="coin-container" onclick="mine(event)">
             <svg class="coin-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <!-- Зовнішній круг монети -->
                 <circle cx="100" cy="100" r="96" fill="#000000" stroke="#00ffcc" stroke-width="6"/>
-                <!-- Внутрішнє рамкове кільце -->
                 <circle cx="100" cy="100" r="88" fill="none" stroke="#00ffcc" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
-                
-                <!-- Логотип PR GRAM (Bubble + Checkmark) -->
                 <g fill="#ffffff" transform="translate(42, 42) scale(0.23)">
                     <path d="M 400 200 C 400 310.457 310.457 400 200 400 C 158.5 400 120.3 387.4 88.6 365.8 L 0 400 L 34.2 311.4 C 12.6 279.7 0 241.5 0 200 C 0 89.543 89.543 0 200 0 C 310.457 0 400 89.543 400 200 Z" fill="none" stroke="#ffffff" stroke-width="42" stroke-linejoin="round" stroke-linecap="round"/>
                     <path d="M 120 200 L 180 260 L 310 130" fill="none" stroke="#ffffff" stroke-width="45" stroke-linecap="round" stroke-linejoin="round"/>
@@ -111,41 +195,60 @@
         </div>
     </div>
 
+    <!-- Нижнє меню навігації -->
+    <div class="nav-bar">
+        <div class="nav-item active">
+            <div>⛏️</div>
+            <div>Майнинг</div>
+        </div>
+        <div class="nav-item" onclick="alert('Задания скоро появятся!')">
+            <div>📋</div>
+            <div>Задания</div>
+        </div>
+        <div class="nav-item" onclick="alert('Бусты в разработке!')">
+            <div>⚡</div>
+            <div>Бусты</div>
+        </div>
+        <div class="nav-item" onclick="alert('Рефералы скоро!')">
+            <div>👥</div>
+            <div>Друзья</div>
+        </div>
+        <div class="nav-item" onclick="alert('Профиль пользователя')">
+            <div>👤</div>
+            <div>Профиль</div>
+        </div>
+    </div>
+
     <script>
-        // Ініціалізація Telegram Web App
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // Дані користувача
         const userDisplay = document.getElementById('user-display');
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
-            const username = user.username ? `@${user.username}` : `${user.first_name} ${user.last_name || ''}`;
-            userDisplay.innerText = username;
+            userDisplay.innerText = user.username ? `@${user.username}` : `${user.first_name}`;
         } else {
-            userDisplay.innerText = "Гость (вне Telegram)";
+            userDisplay.innerText = "Гость";
         }
 
-        // Ініціалізація TON Connect з російською мовою
+        // TON Connect
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/Prgram/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-btn',
-            uiPreferences: {
-                lang: 'ru'
-            }
+            uiPreferences: { lang: 'ru' }
         });
 
-        // Генерація звуку "дзень" через Web Audio API
+        // Звук кліку
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playCoinSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+        function playSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(2400, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
@@ -153,22 +256,80 @@
             osc.stop(audioCtx.currentTime + 0.15);
         }
 
-        // Логіка майнінгу
-        let count = 0;
-        function mine(event) {
-            count += 0.0001;
-            document.getElementById('balance').innerText = count.toFixed(4) + " PR GRAM";
+        // Змінні гри (зберігаються в пам'яті браузера localStorage)
+        let balance = parseFloat(localStorage.getItem('pr_balance')) || 0;
+        let claimBalance = parseFloat(localStorage.getItem('pr_claim')) || 0;
+        let lastActiveTime = parseInt(localStorage.getItem('pr_last_time')) || Date.now();
+        
+        const MAX_HOURS = 6;
+        const MAX_MS = MAX_HOURS * 3600 * 1000;
+        const AUTO_SPEED_PER_SEC = 0.00005; // Швидкість автомайнінгу
 
-            // Звук
-            playCoinSound();
+        // Перевірка часу при заході (якщо минуло більше 6 годин — зупиняємо)
+        let elapsed = Date.now() - lastActiveTime;
+        if (elapsed > 0) {
+            let activeMs = Math.min(elapsed, MAX_MS);
+            let earned = (activeMs / 1000) * AUTO_SPEED_PER_SEC;
+            claimBalance += earned;
+        }
 
-            // Вібрація в Telegram
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
+        updateUI();
+
+        // Головний цикл (автомайнінг кожну секунду)
+        setInterval(() => {
+            let now = Date.now();
+            let diff = now - lastActiveTime;
+
+            if (diff < MAX_MS) {
+                claimBalance += AUTO_SPEED_PER_SEC;
+                lastActiveTime = now;
+                document.getElementById('mining-status').innerText = "🟢 АКТИВЕН";
+                document.getElementById('mining-status').style.background = "#00aa55";
+            } else {
+                document.getElementById('mining-status').innerText = "🔴 СТОП (6Ч)";
+                document.getElementById('mining-status').style.background = "#ff4d4d";
             }
 
-            // Анімація вильоту +0.0001
+            saveData();
+            updateUI();
+        }, 1000);
+
+        // Клік по монетці (ручний майнінг)
+        function mine(event) {
+            claimBalance += 0.0001;
+            lastActiveTime = Date.now(); // Оновлюємо час останньої активності при кліку
+            playSound();
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             showFloatingText(event);
+            updateUI();
+        }
+
+        // Кнопка Claim (зібрати на баланс)
+        function claimCoins() {
+            if (claimBalance <= 0) return;
+            balance += claimBalance;
+            claimBalance = 0;
+            lastActiveTime = Date.now();
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('balance').innerText = balance.toFixed(4) + " PR GRAM";
+            document.getElementById('claim-balance').innerText = "+" + claimBalance.toFixed(4) + " PR GRAM";
+            
+            // Розрахунок часу до зупинки (6 годин)
+            let timeLeft = MAX_MS - (Date.now() - lastActiveTime);
+            if (timeLeft < 0) timeLeft = 0;
+            let hours = Math.floor(timeLeft / (1000 * 3600));
+            let minutes = Math.floor((timeLeft % (1000 * 3600)) / (1000 * 60));
+            document.getElementById('timer-text').innerText = `До стопа: ${hours}г ${minutes}хв`;
+        }
+
+        function saveData() {
+            localStorage.setItem('pr_balance', balance);
+            localStorage.setItem('pr_claim', claimBalance);
+            localStorage.setItem('pr_last_time', lastActiveTime);
         }
 
         function showFloatingText(e) {
@@ -183,12 +344,9 @@
             
             text.style.left = `${x}px`;
             text.style.top = `${y}px`;
-
             container.appendChild(text);
 
-            setTimeout(() => {
-                text.remove();
-            }, 800);
+            setTimeout(() => text.remove(), 800);
         }
     </script>
 </body>
