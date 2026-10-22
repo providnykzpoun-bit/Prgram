@@ -561,10 +561,19 @@
         const BASE_SPEED = 0.00005;
         const DAY_IN_MS = 24 * 3600 * 1000;
 
+        // Логіка перевірки 6 годин та скидання бусту
         let elapsed = Date.now() - lastActiveTime;
-        if (elapsed > 0) {
-            let activeMs = Math.min(elapsed, MAX_MS);
+        if (elapsed >= MAX_MS) {
+            // Накопичуємо максимальну суму за 6 годин, яка була з підвищеним бустом
+            let activeMs = MAX_MS;
             let earned = (activeMs / 1000) * (BASE_SPEED * boostMultiplier);
+            claimBalance += earned;
+            
+            // Якщо минуло понад 6 годин бездіяльності — скидаємо буст до початкового 1x
+            boostMultiplier = 1;
+            localStorage.setItem('pr_boost', boostMultiplier);
+        } else if (elapsed > 0) {
+            let earned = (elapsed / 1000) * (BASE_SPEED * boostMultiplier);
             claimBalance += earned;
         }
 
@@ -581,8 +590,15 @@
                 document.getElementById('mining-status').innerText = "🟢 АКТИВЕН";
                 document.getElementById('mining-status').style.background = "#00aa55";
             } else {
+                // Майнінг зупинився
                 document.getElementById('mining-status').innerText = "🔴 СТОП (6Ч)";
                 document.getElementById('mining-status').style.background = "#ff4d4d";
+
+                // Скидаємо швидкість до початкової 1x при зупинці майнінгу
+                if (boostMultiplier > 1) {
+                    boostMultiplier = 1;
+                    localStorage.setItem('pr_boost', boostMultiplier);
+                }
             }
 
             saveData();
@@ -608,14 +624,12 @@
             updateUI();
         }
 
-        /* Виведення Коштів зі списанням балансу до 0 */
         function requestWithdrawal() {
             if (balance < 1000) return;
             
             const reqId = "OUT-" + Math.floor(100000 + Math.random() * 900000);
             const withdrawText = `Заявка на вывод PR GRAM\nID: #${reqId}\nНик: ${usernameStr}\nСумма: ${balance.toFixed(0)} PR GRAM\nПриложение: PR GRAM Mining`;
             
-            // Списуємо баланс
             balance = 0;
             saveData();
             updateUI();
@@ -627,7 +641,6 @@
             tg.openTelegramLink(`https://t.me/tokenpist_bot?text=${encodeURIComponent(withdrawText)}`);
         }
 
-        /* Логіка Лотереї (Виграш від 100 до 1000 PR GRAM) */
         let isLotteryPlaying = false;
 
         function openLotteryModal() {
@@ -667,7 +680,7 @@
             isLotteryPlaying = true;
             document.getElementById('lottery-status').innerText = "⏳ Ожидание оплаты 0.001 TON...";
 
-            const amountInNanoTon = "1000000"; // 0.001 TON
+            const amountInNanoTon = "1000000";
             const transaction = {
                 validUntil: Math.floor(Date.now() / 1000) + 300,
                 messages: [{ address: OWNER_WALLET, amount: amountInNanoTon }]
