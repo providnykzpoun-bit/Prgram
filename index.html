@@ -842,3 +842,43 @@
             document.getElementById('timer-text').innerText = `До стопа: ${hours}г ${minutes}хв`;
 
             const bonusDiff = Date.now() - lastShareTime;
+            const statusElem = document.getElementById('bonus-status-text');
+            if (bonusDiff >= DAY_IN_MS) {
+                statusElem.innerText = "🎁 Ежедневный бонус +50 PR GRAM доступен!";
+                statusElem.style.color = "#00ffcc";
+            } else {
+                const waitMs = DAY_IN_MS - bonusDiff;
+                const h = Math.floor(waitMs / (1000 * 3600));
+                const m = Math.floor((waitMs % (1000 * 3600)) / (1000 * 60));
+                statusElem.innerText = `⏳ Следующий бонус через: ${h}ч ${m}мин`;
+                statusElem.style.color = "#ffaa00";
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('pr_balance', balance);
+            localStorage.setItem('pr_claim', claimBalance);
+            localStorage.setItem('pr_last_time', lastActiveTime);
+            localStorage.setItem('pr_boost', boostMultiplier);
+            localStorage.setItem('pr_last_share', lastShareTime);
+        }
+
+        function showFloatingText(e) {
+            const container = document.querySelector('.coin-container');
+            const rect = container.getBoundingClientRect();
+            const text = document.createElement('div');
+            text.className = 'click-text';
+            text.innerText = `+${(0.0001 * boostMultiplier).toFixed(4)}`;
+            
+            const x = (e.clientX || rect.left + rect.width / 2) - rect.left;
+            const y = (e.clientY || rect.top + rect.height / 2) - rect.top;
+            
+            text.style.left = `${x}px`;
+            text.style.top = `${y}px`;
+            container.appendChild(text);
+
+            setTimeout(() => text.remove(), 800);
+        }
+    </script>
+</body>
+</html>
