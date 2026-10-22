@@ -77,18 +77,126 @@
         .coin-container {
             position: relative;
             display: inline-block;
-            margin: 15px 0;
+            margin: 15px 0 10px 0;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
         .coin-svg {
-            width: 150px;
-            height: 150px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
             transition: transform 0.08s ease;
         }
         .coin-container:active .coin-svg { transform: scale(0.92); }
+
+        /* Стилі для нижніх двох блоків дій */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .action-card {
+            background: #111823;
+            border: 1px solid #00ffcc33;
+            border-radius: 12px;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .action-icon { font-size: 1.8em; margin-bottom: 5px; }
+        .action-title { font-size: 0.85em; font-weight: bold; color: #ffffff; margin-bottom: 4px; }
+        .action-desc { font-size: 0.7em; color: #8a9ba8; margin-bottom: 10px; }
+        
+        .btn-action {
+            width: 100%;
+            padding: 8px 0;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.8em;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-withdraw-disabled {
+            background: #22303c;
+            color: #6c7a89;
+            cursor: not-allowed;
+        }
+        .btn-withdraw-active {
+            background: linear-gradient(90deg, #00ffcc, #0088cc);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+        .btn-lottery {
+            background: linear-gradient(90deg, #ffaa00, #ffd700);
+            color: #000;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.4);
+        }
+
+        /* Модальне вікно лотереї */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #1c2536;
+            border: 2px solid #ffaa00;
+            border-radius: 16px;
+            padding: 20px;
+            width: 90%;
+            max-width: 360px;
+            box-shadow: 0 0 25px rgba(255, 170, 0, 0.4);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5em;
+            color: #8a9ba8;
+            cursor: pointer;
+        }
+        .tickets-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        .ticket-item {
+            background: #111823;
+            border: 1px solid #ffaa00;
+            border-radius: 8px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #ffd700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .ticket-item:active { transform: scale(0.95); }
+        .ticket-item.opened {
+            background: #0f2824;
+            border-color: #00ffcc;
+            color: #00ffcc;
+            font-size: 0.75em;
+        }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -259,6 +367,22 @@
                     </g>
                 </svg>
             </div>
+
+            <!-- Два блоки дій знизу -->
+            <div class="actions-grid">
+                <div class="action-card">
+                    <div class="action-icon">💸</div>
+                    <div class="action-title">Вывод PR GRAM</div>
+                    <div class="action-desc" id="withdraw-info">Мин: 1000 PR GRAM</div>
+                    <button id="btn-withdraw" class="btn-action btn-withdraw-disabled" onclick="requestWithdrawal()">Вывести</button>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">🎰</div>
+                    <div class="action-title">Лотерея</div>
+                    <div class="action-desc">Выиграй до 10 000</div>
+                    <button class="btn-action btn-lottery" onclick="openLotteryModal()">Билет (0.001 TON)</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -300,77 +424,14 @@
             <h3>Задания</h3>
             <p style="color:#8a9ba8; font-size: 0.85em; margin-bottom: 15px;">Выполняй задания и получай бесплатные PR GRAM!</p>
 
-            <!-- 1. Магазин PR GRAM -->
-            <div class="task-card">
-                <div>
-                    <div class="task-title">Магазин PR GRAM</div>
-                    <div class="task-reward">+100 PR GRAM</div>
-                </div>
-                <button id="btn-task-1" class="btn-task" onclick="handleTask(1, 'https://t.me/Magagazinchik_bot', 100)">Выполнить</button>
-            </div>
-
-            <!-- 2. Лотерея PR GRAM -->
-            <div class="task-card">
-                <div>
-                    <div class="task-title">Лотерея PR GRAM</div>
-                    <div class="task-reward">+100 PR GRAM</div>
-                </div>
-                <button id="btn-task-2" class="btn-task" onclick="handleTask(2, 'https://t.me/drugprgram', 100)">Выполнить</button>
-            </div>
-
-            <!-- 3. Радіо Удвох -->
-            <div class="task-card">
-                <div>
-                    <div class="task-title">Радіо Удвох</div>
-                    <div class="task-reward">+100 PR GRAM</div>
-                </div>
-                <button id="btn-task-3" class="btn-task" onclick="handleTask(3, 'https://t.me/radioudvoh', 100)">Выполнить</button>
-            </div>
-
-            <!-- 4. Бот раскрутки -->
-            <div class="task-card">
-                <div>
-                    <div class="task-title">Бот раскрутки</div>
-                    <div class="task-reward">+100 PR GRAM</div>
-                </div>
-                <button id="btn-task-4" class="btn-task" onclick="handleTask(4, 'https://t.me/Psbua_bot', 100)">Выполнить</button>
-            </div>
-
-            <!-- 5. iCryptoCheck Bot -->
-            <div class="task-card">
-                <div>
-                    <div class="task-title">iCryptoCheck Bot</div>
-                    <div class="task-reward">+100 PR GRAM</div>
-                </div>
-                <button id="btn-task-5" class="btn-task" onclick="handleTask(5, 'https://t.me/iCryptoCheckBot?start=ref_V15H13eF', 100)">Выполнить</button>
-            </div>
-
-            <!-- 6. xRocket Wallet -->
-            <div class="task-card">
-                <div>
-                    <div class="task-title">xRocket Wallet</div>
-                    <div class="task-reward">+100 PR GRAM</div>
-                </div>
-                <button id="btn-task-6" class="btn-task" onclick="handleTask(6, 'https://t.me/xrocket?start=i_rgSy6SJGob', 100)">Выполнить</button>
-            </div>
-
-            <!-- 7. Crypto Bot -->
-            <div class="task-card">
-                <div>
-                    <div class="task-title">Crypto Bot</div>
-                    <div class="task-reward">+100 PR GRAM</div>
-                </div>
-                <button id="btn-task-7" class="btn-task" onclick="handleTask(7, 'http://t.me/send?start=r-wx3x4-market', 100)">Выполнить</button>
-            </div>
-
-            <!-- 8. Крипта для всех -->
-            <div class="task-card">
-                <div>
-                    <div class="task-title">Крипта для всех</div>
-                    <div class="task-reward">+100 PR GRAM</div>
-                </div>
-                <button id="btn-task-8" class="btn-task" onclick="handleTask(8, 'https://t.me/pgon?start=ref_ik7c4obl', 100)">Выполнить</button>
-            </div>
+            <div class="task-card"><div><div class="task-title">Магазин PR GRAM</div><div class="task-reward">+100 PR GRAM</div></div><button id="btn-task-1" class="btn-task" onclick="handleTask(1, 'https://t.me/Magagazinchik_bot', 100)">Выполнить</button></div>
+            <div class="task-card"><div><div class="task-title">Лотерея PR GRAM</div><div class="task-reward">+100 PR GRAM</div></div><button id="btn-task-2" class="btn-task" onclick="handleTask(2, 'https://t.me/drugprgram', 100)">Выполнить</button></div>
+            <div class="task-card"><div><div class="task-title">Радіо Удвох</div><div class="task-reward">+100 PR GRAM</div></div><button id="btn-task-3" class="btn-task" onclick="handleTask(3, 'https://t.me/radioudvoh', 100)">Выполнить</button></div>
+            <div class="task-card"><div><div class="task-title">Бот раскрутки</div><div class="task-reward">+100 PR GRAM</div></div><button id="btn-task-4" class="btn-task" onclick="handleTask(4, 'https://t.me/Psbua_bot', 100)">Выполнить</button></div>
+            <div class="task-card"><div><div class="task-title">iCryptoCheck Bot</div><div class="task-reward">+100 PR GRAM</div></div><button id="btn-task-5" class="btn-task" onclick="handleTask(5, 'https://t.me/iCryptoCheckBot?start=ref_V15H13eF', 100)">Выполнить</button></div>
+            <div class="task-card"><div><div class="task-title">xRocket Wallet</div><div class="task-reward">+100 PR GRAM</div></div><button id="btn-task-6" class="btn-task" onclick="handleTask(6, 'https://t.me/xrocket?start=i_rgSy6SJGob', 100)">Выполнить</button></div>
+            <div class="task-card"><div><div class="task-title">Crypto Bot</div><div class="task-reward">+100 PR GRAM</div></div><button id="btn-task-7" class="btn-task" onclick="handleTask(7, 'http://t.me/send?start=r-wx3x4-market', 100)">Выполнить</button></div>
+            <div class="task-card"><div><div class="task-title">Крипта для всех</div><div class="task-reward">+100 PR GRAM</div></div><button id="btn-task-8" class="btn-task" onclick="handleTask(8, 'https://t.me/pgon?start=ref_ik7c4obl', 100)">Выполнить</button></div>
         </div>
     </div>
 
@@ -386,6 +447,23 @@
                 <div class="profile-info-row"><span class="profile-label">В проекте с:</span><span id="profile-date" class="profile-value">-</span></div>
                 <div class="profile-info-row"><span class="profile-label">Текущий буст:</span><span id="profile-boost" class="profile-value">1x</span></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно ЛОТЕРЕЇ -->
+    <div id="lottery-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeLotteryModal()">&times;</span>
+            <h3 style="color:#ffaa00; margin-top:0;">🎰 Лотерея PR GRAM</h3>
+            <p style="font-size:0.8em; color:#8a9ba8;">Выберите любой билет (1 из 10) и испытайте удачу! Выигрыш от 1000 до 10000 PR GRAM.</p>
+            <p style="font-size:0.85em; color:#00ffcc; font-weight:bold;">Цена билета: 0.001 TON</p>
+
+            <div class="tickets-grid" id="tickets-container">
+                <!-- 10 Квитків -->
+            </div>
+
+            <div id="lottery-status" style="font-size:0.85em; color:#00ffcc; min-height:24px;"></div>
+            <button id="btn-replay" class="btn-invite" style="display:none; margin-top:10px; background:linear-gradient(90deg, #ffaa00, #ffd700);" onclick="resetLotteryGrid()">🔄 Сыграть еще раз</button>
         </div>
     </div>
 
@@ -536,6 +614,90 @@
             updateUI();
         }
 
+        /* Виведення Коштів */
+        function requestWithdrawal() {
+            if (balance < 1000) return;
+            
+            const reqId = "OUT-" + Math.floor(100000 + Math.random() * 900000);
+            const withdrawText = `Заявка на вывод PR GRAM\nID: #${reqId}\nНик: ${usernameStr}\nСумма: ${balance.toFixed(0)} PR GRAM\nПриложение: PR GRAM Mining`;
+            
+            const botUrl = `https://t.me/tokenpist_bot?start=${encodeURIComponent(reqId)}`;
+            tg.openTelegramLink(botUrl);
+            alert(`Заявка #${reqId} создана! Направляем вас в бота @tokenpist_bot для завершения.`);
+        }
+
+        /* Логіка Лотереї */
+        let isLotteryPlaying = false;
+
+        function openLotteryModal() {
+            document.getElementById('lottery-modal').style.display = 'flex';
+            resetLotteryGrid();
+        }
+
+        function closeLotteryModal() {
+            if (isLotteryPlaying) return;
+            document.getElementById('lottery-modal').style.display = 'none';
+        }
+
+        function resetLotteryGrid() {
+            isLotteryPlaying = false;
+            document.getElementById('lottery-status').innerText = "";
+            document.getElementById('btn-replay').style.display = "none";
+            const container = document.getElementById('tickets-container');
+            container.innerHTML = "";
+
+            for (let i = 1; i <= 10; i++) {
+                const ticket = document.createElement('div');
+                ticket.className = 'ticket-item';
+                ticket.innerText = i;
+                ticket.onclick = () => playTicket(ticket);
+                container.appendChild(ticket);
+            }
+        }
+
+        async function playTicket(ticketElem) {
+            if (isLotteryPlaying || ticketElem.classList.contains('opened')) return;
+
+            if (!tonConnectUI.connected) {
+                alert("Пожалуйста, подключите TON кошелек сверху!");
+                return;
+            }
+
+            isLotteryPlaying = true;
+            document.getElementById('lottery-status').innerText = "⏳ Ожидание оплаты 0.001 TON...";
+
+            const amountInNanoTon = "1000000"; // 0.001 TON
+            const transaction = {
+                validUntil: Math.floor(Date.now() / 1000) + 300,
+                messages: [{ address: OWNER_WALLET, amount: amountInNanoTon }]
+            };
+
+            try {
+                const result = await tonConnectUI.sendTransaction(transaction);
+                if (result) {
+                    const winAmount = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+                    balance += winAmount;
+                    saveData();
+                    updateUI();
+
+                    ticketElem.classList.add('opened');
+                    ticketElem.innerText = `+${winAmount}`;
+                    ticketElem.onclick = null;
+
+                    playClaimSound();
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+
+                    document.getElementById('lottery-status').innerText = `🎉 Поздравляем! Вы выиграли +${winAmount} PR GRAM!`;
+                    document.getElementById('btn-replay').style.display = "block";
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('lottery-status').innerText = "❌ Оплата отменена или произошла ошибка.";
+            } finally {
+                isLotteryPlaying = false;
+            }
+        }
+
         function processDailyShareBonus() {
             const now = Date.now();
             if (now - lastShareTime >= DAY_IN_MS) {
@@ -562,7 +724,7 @@
             });
         }
 
-        /* Логіка Завдань */
+        /* Завдання */
         function initTasksUI() {
             completedTasks.forEach(taskId => {
                 const btn = document.getElementById(`btn-task-${taskId}`);
@@ -657,6 +819,20 @@
             document.getElementById('claim-balance').innerText = "+" + claimBalance.toFixed(4) + " PR GRAM";
             document.getElementById('speed-multiplier').innerText = `${boostMultiplier}x`;
             document.getElementById('profile-boost').innerText = `${boostMultiplier}x`;
+
+            const btnWithdraw = document.getElementById('btn-withdraw');
+            const withdrawInfo = document.getElementById('withdraw-info');
+            if (balance >= 1000) {
+                btnWithdraw.className = "btn-action btn-withdraw-active";
+                btnWithdraw.innerText = "Вывести";
+                withdrawInfo.innerText = "Доступно к выводу!";
+                withdrawInfo.style.color = "#00ffcc";
+            } else {
+                btnWithdraw.className = "btn-action btn-withdraw-disabled";
+                btnWithdraw.innerText = "Вывести";
+                withdrawInfo.innerText = `Мин: 1000 PR GRAM`;
+                withdrawInfo.style.color = "#8a9ba8";
+            }
 
             let rankName = " 🌱 Новичок";
             if (boostMultiplier >= 3 && boostMultiplier < 6) rankName = " ⚡ Искатель";
